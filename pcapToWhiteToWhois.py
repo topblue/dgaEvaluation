@@ -1,14 +1,19 @@
 # -*- coding: UTF-8 -*-
 import re
 import sys
-import filter
+# import filter
 import whois
-import os
+import os, errno
 
 def appendWrite(filename,data):
 	f = open(filename,"a")
 	f.write(data)
 	f.close
+def safeRemove(filename):
+	try:
+		os.remove(filename)
+	except OSError as e:
+		print e
 
 def dnslist(inputFilteName,domainName):
 	f = open(inputFilteName)
@@ -59,13 +64,14 @@ def queryWhois(whitelist,queryWhois_Path):
 # 		appendWrite(filename,data)
 
 if __name__ == "__main__":
-	inputFilteName = "tran.csv"
+	# inputFilteName = "tran.csv"
+	inputFilteName = sys.argv[1]
 	domainName_Path = "domainName.txt"
 	whiteListFilter_Path = "whiteListFilter.txt"
 	queryWhois_Path = "queryWhois.txt"
-	os.remove(domainName_Path)	#檔案刪除
-	os.remove(whiteListFilter_Path)	#檔案刪除
-	os.remove(queryWhois_Path)	#檔案刪除
+	safeRemove(domainName_Path)	#檔案刪除
+	safeRemove(whiteListFilter_Path)	#檔案刪除
+	safeRemove(queryWhois_Path)	#檔案刪除
 	uniqDns = dnslist(inputFilteName,domainName_Path)
 	whitelist = whiteList(uniqDns,whiteListFilter_Path)
 	queryWhois(whitelist,queryWhois_Path)
